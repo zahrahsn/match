@@ -1,7 +1,6 @@
 .idea
 .vscode
 venv
-*.sqlite3
 .pytest_cache
 *.pyc
 migrations
