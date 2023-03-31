@@ -1,0 +1,28 @@
+{% extends "web/base.html" %}
+
+{% block content %}
+    <h2 class="text-center mb-4">
+        All Provinces
+    </h2>
+    {% for prov in province %}
+        <p>
+            <a class="btn btn-primary w-100"
+               data-toggle="collapse"
+               href="#collapseExample-{{ prov.name }}"
+               role="button"
+               aria-expanded="false"
+               aria-controls="collapseExample">
+                {{ prov.name }}
+            </a>
+        </p>
+        <div class="collapse" id="collapseExample-{{ prov.name }}">
+            <div class="card card-body">
+                <ul class="list-group list-group-flush">
+                    {% for s in prov.stations %}
+                        <li class="list-group-item" value="{{ s.stations_id }}">{{ s.stationsname }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock content %}

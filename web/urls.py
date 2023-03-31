@@ -1,10 +1,8 @@
 from django.urls import path
 from django.views.generic import TemplateView
 
+from web import views
+
 urlpatterns = [
-    path(
-        "",
-        TemplateView.as_view(template_name="web/base.html"),
-        name="home"
-    ),
+    path("", views.index, name="bundes-list"),
 ]

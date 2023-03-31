@@ -6,8 +6,8 @@ import pandas as pd
 
 df = pd.read_csv('id_station.txt', delimiter=';')
 del df[df.columns[-1]]
-connection= sqlite3.connect('../db.sqlite3')
-df.to_sql('station',connection, if_exists='replace')
+# connection= sqlite3.connect('../db.sqlite3')
+# df.to_sql('station',connection, if_exists='replace')
 # connection.close()
 bundesland_name = input('Enter Bundesland to find:\n').title()
 possible_station = df.loc[df.Bundesland.str.contains(bundesland_name), ['Stations_id', 'Stationsname', 'Bundesland']]
@@ -20,8 +20,8 @@ def process(station):
     temper_df = pd.read_csv(file_path,delimiter=';')
     del temper_df[temper_df.columns[-1]]
 
-    temper_df.to_sql('temperature', connection, if_exists='replace')
-    connection.close()
+    # temper_df.to_sql('temperature', connection, if_exists='replace')
+    # connection.close()
     # temper_df.set_index("Stations_id")
     station_year_df = temper_df.loc[temper_df.Stations_id == station]
 
