@@ -4,7 +4,7 @@
     <h2 class="text-center mb-4">
         All Provinces
     </h2>
-    {% for prov in province %}
+    {% for prov in provinces %}
         <p>
             <a class="btn btn-primary w-100"
                data-toggle="collapse"
@@ -19,7 +19,9 @@
             <div class="card card-body">
                 <ul class="list-group list-group-flush">
                     {% for s in prov.stations %}
-                        <li class="list-group-item" value="{{ s.stations_id }}">{{ s.stationsname }}</li>
+                        <li class="list-group-item">
+                            <a href="{% url 'chart' s.stations_id %}">{{ s.stationsname }}</a>
+                        </li>
                     {% endfor %}
                 </ul>
             </div>

@@ -15,6 +15,7 @@ class Station(models.Model):
 
 
 class Temperature(models.Model):
+    id = models.AutoField(db_column='id', primary_key=True)
     stations = models.ForeignKey(
         Station, models.DO_NOTHING, db_column='Stations_id', to_field='', blank=True, null=True
     )
