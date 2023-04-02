@@ -20,7 +20,7 @@
                 <ul class="list-group list-group-flush">
                     {% for s in prov.stations %}
                         <li class="list-group-item">
-                            <a href="{% url 'chart' s.stations_id %}">{{ s.stationsname }}</a>
+                            <a href="{% url 'chart' s.id %}">{{ s.name }}</a>
                         </li>
                     {% endfor %}
                 </ul>

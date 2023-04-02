@@ -1,23 +1,37 @@
-from django.test import TestCase
-from matplotlib import pyplot as plt
-import numpy as np
+import pytest
+from _pytest.fixtures import fixture
+
+from web.models import Temperature
+from web.views import plotter, read_temp_data, read_stations
 
 
-#
-# from web.preparing import process
-#
-#
-# def test_process():
-#     process(435)
+@fixture
+def temperature():
+    temp = Temperature()
+    temp.jan = 1.2
+    temp.feb = 2.3
+    temp.mar = 3.4
+    temp.apr = 4.5
+    temp.may = -1
+    temp.jun = 3.4
+    temp.jul = 5.6
+    temp.aug = 6.7
+    temp.sep = 6.8
+    temp.oct = 7.9
+    temp.nov = 3.2
+    temp.dec = 1
+    temp.year = 5
+    return temp
 
 
-def test_plot():
-    names = ['Jan.', 'Feb.', 'März.', 'Apr.', 'Mai', 'Jun.', 'Jul.', 'Aug.', 'Sept.', 'Okt.', 'Nov.', 'Dez.']
-    values = np.array([1.2, 2.3, 3.4, 4.5, -1, 3.4, 5.6, 6.7, 6.8, 7.9, 3.2, 1])
-    plt.plot(names, values, marker='o')
-    for i, j in zip(names, values):
-        plt.annotate(str(j), xy=(names.index(i), j))
-    plt.axhline(y=6, color='r', linestyle='-')
-    plt.grid(True)
-    plt.title("Mean Temperature Between 1991-2020", loc="center")
-    plt.show()
+def test_plot(temperature):
+    """
+    Testing that plotter raises no exceptions
+    :param temperature: The sample Temperature object
+    """
+    plotter(temperature, 'test_province', 'test_station')
+
+
+@pytest.mark.django_db
+def test_read_station():
+    read_stations()
