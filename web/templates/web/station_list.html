@@ -1,9 +1,23 @@
 {% extends "web/base.html" %}
 
 {% block content %}
-    <h2 class="text-center mb-4">
+    <h4 class="text-center mb-4 mt-3">
+        Enter city name or select from the list to view the chart
+    </h4>
+    <form class="form-group mt-3" action="{% url 'chart_by_name' %}" method="post">
+        <div class="row">
+            <div class="col-sm-9">
+                <input type="text" class="form-control" name="city_name" placeholder="Enter city">
+            </div>
+            <div class="col-sm-3">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </form>
+    <hr>
+    <h4 class="text-center mb-4">
         All Provinces
-    </h2>
+    </h4>
     {% for prov in provinces %}
         <p>
             <a class="btn btn-primary w-100"

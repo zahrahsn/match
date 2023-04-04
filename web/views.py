@@ -1,5 +1,11 @@
+import json
+import os
+
 import pandas as pd
+import requests
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+
 from web.models import Station, Temperature
 from itertools import groupby
 import matplotlib.pyplot as plt
@@ -25,7 +31,7 @@ def index(request):
     """
     stations = list(Station.objects.all().order_by('province'))
     if len(stations) == 0:
-        stations = read_stations()
+        stations = read_stations(1)
     provinces = []
     for key, group in groupby(stations, lambda x: x.province):
         provinces.append(
@@ -56,6 +62,28 @@ def chart(request, id):
     plot = plotter(temp, temp.station.province, temp.station.name)
     context = {'data': plot}
     return render(request, 'web/chart.html', context=context)
+
+
+@csrf_exempt
+def chart_by_name(request):
+    """
+    Chart view
+     - Receives the id of station from the url
+     - retrieves the temperature object
+     (attempts to read from database. If does not exist in db, fetches from "temperature_url" and stores in db.)
+     - renders chart template with base64-encoded plot
+    :param request: The http request
+    :return: The rendered 'chart' template
+    """
+    if request.method == 'POST':
+        station_id = get_station_id_by_name(request.POST['city_name'])
+        try:
+            temp = Temperature.objects.get(station__id=station_id)
+        except Temperature.DoesNotExist:
+            temp = read_temp_data(station_id)
+        plot = plotter(temp, temp.station.province, temp.station.name)
+        context = {'data': plot}
+        return render(request, 'web/chart.html', context=context)
 
 
 def read_temp_data(station_id) -> Temperature:
@@ -96,7 +124,7 @@ def read_temp_data(station_id) -> Temperature:
     return temp
 
 
-def read_stations():
+def read_stations(fl: int):
     """
     If the stations table is empty, fetches the stations data of Germany from 'stations_url'
     and stores them in database.
@@ -109,6 +137,8 @@ def read_stations():
     )
     del df[df.columns[-1]]
     df.columns = ['id', 'st_name', 'lat', 'long', 'height', 'province']
+    if fl == 2:
+        return df
     stations = []
     for idx, st in df.iterrows():
         obj = Station()
@@ -120,6 +150,7 @@ def read_stations():
         obj.height = st.height
         obj.save()
         stations.append(obj)
+
     return stations
 
 
@@ -161,3 +192,23 @@ def plotter(temp: Temperature, province, station_name):
     plt.close()
     bio.seek(0)
     return base64.b64encode(bio.read()).decode()
+
+
+def get_station_id_by_name(city_name: str) -> int:
+    url = "https://forward-reverse-geocoding.p.rapidapi.com/v1/forward"
+    querystring = {"city": city_name}
+    x = os.environ.get("RapidAPI_Key")
+    headers = {
+        "X-RapidAPI-Key": os.getenv("RapidAPI_Key"),
+        "X-RapidAPI-Host": "forward-reverse-geocoding.p.rapidapi.com"
+    }
+    response = requests.request("GET", url, headers=headers, params=querystring)
+    result = response.json()
+    lat = float(result[0]['lat'])
+    lon = float(result[0]['lon'])
+    df = read_stations(2)
+    # calculate distance from each row to the target point (a,b)
+    df['distance'] = ((df['lat'] - lat) ** 2 + (df['long'] - lon) ** 2) ** 0.5
+    # sort dataframe by distance and select the row with the smallest distance
+    result = df.sort_values('distance').iloc[0]
+    return result['id']
