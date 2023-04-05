@@ -4,7 +4,7 @@ and draw a diagram of given station.
 
 #### How to run
  - Build the docker image: `docker build -t weather .` 
- - Run the container: `docker run -p 8000:8000 weather -d`
+ - Run the container: `docker run -p 8000:8000 -v ./db.sqlite3:/web/db.sqlite3 weather -d`
 
 #### How to run tests
  - Install dependencies: `python -m pip install -r requirements.txt`

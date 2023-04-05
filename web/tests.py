@@ -34,4 +34,5 @@ def test_plot(temperature):
 
 @pytest.mark.django_db
 def test_read_station():
-    read_stations()
+    df = read_stations(2)
+    assert df is not None

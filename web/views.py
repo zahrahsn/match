@@ -1,11 +1,9 @@
 import json
 import os
-
 import pandas as pd
 import requests
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-
 from web.models import Station, Temperature
 from itertools import groupby
 import matplotlib.pyplot as plt
